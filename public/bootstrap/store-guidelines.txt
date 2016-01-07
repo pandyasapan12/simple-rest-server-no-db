@@ -1,0 +1,23 @@
+Use the provided images to create a responsive / angular driven page. Angular / Bootstrap / JSON are included. 
+
+Breakpoints 
+
+1. >= 768 use angularjs-store.png as a design reference
+2. <  768 use  angularjs-store-phone.png and angularjs-store-phone-nav.png as a design reference
+
+
+
+The page should should work in the latest version of Firefox, Chrome, Safari, IE & IE8
+
+The page should be semanitcally correct and follow as many SEO best practices as possible
+
+The page should follow as many optimization best practices as possible ( to reduce load times )
+
+
+Features:
+1. Search - Search by product name, When user types a product name into the search box, all products that match the search term display. ( angularjs-store-search-for-stadium-view.png )
+2. Add items - Once product name, description and price are populated, and ‘Add button has been clicked’, the new product should add and display in the current list. ( angularjs-store-add-item-view.png )
+3. Remove items - when user click on remove "X" icon, the corresponding product should remove from the list.
+
+
+The page does not have to be pixel perfect.

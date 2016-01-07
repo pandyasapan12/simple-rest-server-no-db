@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Online Store</title>
+    
+    <meta charset="utf-8" lang="en"/>
+    
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>
+    <script src="js/bootstrap.js"></script>
+</head>
+    
+<body>
+    
+    <!-- Navigation bar at the top -->
+    
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Online Store</a>
+            </div>
+            
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                  <li class="active"><a href="#">Home</a></li>
+                  <li><a href="#">About</a></li>
+                  <li><a href="#">Catalog</a></li> 
+                  <li><a href="#">Contact</a></li> 
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Second Container and Data -->
+    
+    <div class="container" id="secondContainer">
+        
+        <div class="col-md-3 well">    
+                <ul class="nav nav-pills nav-stacked">
+                  <li class="active"><a href="#">Add Product</a></li> <br/>
+                  <li><a href="#">Electronics</a></li> <br/>
+                  <li><a href="#">Clothings</a></li> <br/>
+                  <li><a href="#">Home Improvements</a></li> <br/>
+                </ul>
+        </div>
+        
+        <div class="col-md-9">
+                
+                <form class="form-inline" role="form">
+                  <div class="form-group">
+                    <label for="search">Search</label>
+                    <input type="text" class="form-control" id="searchItem" placeholder="Search by item name">
+                  </div>
+                </form>
+            
+                <p></p>
+            
+                <form class="form-inline" role="form">
+                  <div class="form-group">
+                        <label for="adding">Add Item</label>
+                        <input type="text" class="form-control" id="addItem" placeholder="Item Name">
+                        <input type="text" class="form-control" id="descriptionItem" placeholder="Description">
+                        <input type="text" class="form-control" id="priceItem" placeholder="Price">
+                  </div>
+                        <button type="submit" class="btn btn-default" id="submitButton">Add</button>
+                </form> 
+            
+                <div id="display">
+                    
+                            
+                </div> <!-- <div id="display"> -->
+            
+        </div> <!-- <div class="col-md-9"> -->
+        
+    </div> <!-- <div class="container" id="secondContainer"> -->
+    
+    <!-- --------------------------------------------------------------------------------------------------- -->
+            
+    <script>
+    
+        $(document).ready(function(){
+            
+            $("#submitButton").on('click', function(event)
+                                  
+                { 
+                    event.preventDefault();
+                
+                     $.ajax({
+                        type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+                        url         : '/Products', // the url where we want to POST
+                        data        : {
+                                        'addItem'         : $('input[id=addItem]').val(),
+                                        'description'     : $('input[id=descriptionItem]').val(),
+                                        'priceItem'       : $('input[id=priceItem]').val(),
+                                        }, // our data object
+                        dataType    : 'json', // what type of data do we expect back from the server
+
+                        success     : function(data) {
+
+                                           $.get( "/Products", function( data ) { //.get for GET method
+
+                                                var obj = eval ( data );
+
+                                                     for( var i=0; i<obj.length; i++){
+
+                                                      $( "#display" ).append(
+                                                          
+                                                          "<div class='container topMargin well'>" +
+                                                            "<div class='col-md-8'>" + 
+                                                                    " <h2 class='newItemName'>" +
+                                                                        obj[i].addItem +
+                                                                    "</h2>" +
+                                                                    "<h4 class='newItemDescription'>" +
+                                                                        obj[i].description +
+                                                                    "</h4>" +
+                                                            "</div>" +
+                                                            "<div class='col-md-2 main'>" +
+                                                                "<button class='btn btn-primary'><span class='newItemValue'>" +
+                                                                    obj[i].priceItem +
+                                                                "</span></button>" +
+                                                            "</div>" +
+                                                            "<div class='col-md-2 main'>" +
+                                                                "<span class='glyphicon glyphicon-remove-sign' class='removeData'></span>" +
+                                                            "</div>" +
+                                                        "</div>" );
+                                                         
+                                                     } // for loop
+                                               
+                                              // console.log(obj);
+
+                                            });  //  $.get( "/Stores", function( data )       
+                            
+                                        } //function(data)
+
+                    });  // $.ajax({
+                
+                    //Reseting all input values to null after add button being pressed
+                    $('input[id=addItem]').val("");
+                    $('input[id=descriptionItem]').val("");
+                    $('input[id=priceItem]').val("");
+  
+                });  // $("#submitButton").on('click', function(event)
+            
+            // remove whole div, by pressing remove button, using jQuery DELEGATION METHOD
+             $("#display").on( "click", ".glyphicon", function(){  
+                   $(this).parent().parent().remove();
+                });
+            
+        });  //  $(document).ready(function(){
+        
+    </script>
+
+</body>
+</html>
