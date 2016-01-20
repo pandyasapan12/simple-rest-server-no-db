@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+	<title>Online Store</title>
+    
+    <meta charset="utf-8" lang="en"/>
+    
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>
+    <script src="js/bootstrap.js"></script>
+    <script src="handlebars-v4.0.5.js"></script>
+    <script src="jquery.confirm.js"></script>
+    
+    <script type="text/javascript" src="angular.min.js"></script>
+    
+</head>
+    
+<body>
+    
+    <!-- ------------------------------- Navigation bar at the top ------------------------------------------------ -->
+    
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Online Store</a>
+            </div>
+            
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                  <li class="active"><a href="#">Home</a></li>
+                  <li><a href="#">About</a></li>
+                  <li><a href="#">Catalog</a></li> 
+                  <li><a href="#">Contact</a></li> 
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- -------------------------------- Second Container and Data ----------------------------------------------- -->
+    
+    <div class="container" id="secondContainer">
+        
+           <!-- --------------------------- Side Navigation Bar --------------------------------------- -->
+        <div class="col-md-3 well">    
+                <ul class="nav nav-pills nav-stacked">
+                  <li class="active"><a href="#">Add Product</a></li> <br/>
+                  <li><a href="#">Electronics</a></li> <br/>
+                  <li><a href="#">Clothings</a></li> <br/>
+                  <li><a href="#">Home Improvements</a></li> <br/>
+                </ul>
+        </div>
+        
+            <!-- --------------------------- Product Adding and Displaying Box ------------------------------- -->
+        <div class="col-md-9"  ng-controller="firstController">
+                
+                <form class="form-inline" role="form">
+                  <div class="form-group">
+                    <label for="search">Search</label>
+                    <input type="text" class="form-control" id="searchItem" placeholder="Search by item name">
+                  </div>
+                </form>
+            
+                <p></p>
+            
+                <form class="form-inline" role="form">
+                  <div class="form-group">
+                        <label for="adding">Add Item</label>
+                        <input type="text" class="form-control" id="addItem" placeholder="Item Name" ng-model="newItemName">
+                        <input type="text" class="form-control" id="descriptionItem" placeholder="Description" ng-model="newItemDescription">
+                        <input type="text" class="form-control" id="priceItem" placeholder="Price" ng-model="newItemPrice">
+                  </div>
+                        <button type="submit" class="btn btn-default" id="submitButton" ng-click="createProduct()" >Add</button>
+                </form> 
+            
+                <div id="display">
+                    
+                    <!-- ------------------------ Template ---------------------------------------------- -->
+                    
+                       <div ng-repeat='product in products'> 
+                           
+                            <div id='{{product.id}}' class='container topMargin well'>
+                                
+                                <div class='col-md-8'>
+                                    <h2 class='newItemName'> {{product.addItem}} </h2>
+                                    <h4 class='newItemDescription'> {{product.description}} </h4>
+                                </div>
+                                <div class='col-md-2 main'>
+                                    <button class='btn btn-primary'><span class='newItemValue'> {{product.priceItem}} </span></button>
+                                </div>
+                                <div class='col-md-2 main'>
+                                    <span class='glyphicon glyphicon-remove-sign removeData' ng-click='removeMe(product.id)'></span>
+                                </div>
+                                
+                            </div> 
+                           
+                        </div>
+                    
+                    <!-- ---------------------------------------------------------------------------------- -->
+                            
+                </div> <!-- <div id="display"> -->
+            
+        </div> <!-- <div class="col-md-9"> -->
+        
+    </div> <!-- <div class="container" id="secondContainer"> -->
+    
+    <!-- --------------------------------------------------------------------------------------------------- -->
+            
+    <script>
+        
+        var myApp = angular.module("myApp", []);
+                
+        myApp.controller("firstController", function($scope,$http){ 
+                      
+            //AJAX call function
+            function GetProducts() {
+                $http({                  //Defining the $http service for getting the people
+                    method: 'GET',
+                    url: '/onlineItems'
+                })
+                .success(function (response) {
+                   $scope.products = response;
+                });
+            }
+            
+            //Data displaying on page load
+            GetProducts();
+                   
+            //Adding a new product
+            $scope.createProduct = function () {
+                //Defining $http service for creating a person
+                $http({
+                    method: 'POST',
+                    url: '/onlineItems',
+                    data : {
+                        addItem : $scope.newItemName,
+                        description : $scope.newItemDescription,
+                        priceItem : $scope.newItemPrice
+                    }
+                })
+                .success(function (data) { GetProducts(); });
+            };
+                 
+            //Removing The Data
+            $scope.removeMe = function(pId){ 
+                $http({
+                    method: 'DELETE',
+                    url: '/onlineItems/' + pId
+                })
+                .success(function (data) { GetProducts();});    
+            };
+                
+        });
+        
+          
+            //Data displaying on page load
+            /*var url = "/onlineItems";
+                 
+            $http.get(url).success( function(response) {
+                $scope.products = response;
+            });
+            */
+        
+    </script>
+    
+    <!-- 
+
+    ///////////////////////// LOADING ALL THE PRODUCTS ON THE PAGE LOAD //////////////////////////////////////////
+        
+        $(document).ready(function(){
+            
+            $.ajax({
+                        type        : 'GET', // define the type of HTTP verb we want to use (POST for our form)
+                        url         : '/onlineItems', // the url where we want to GET
+                        data        : {
+                                        'addItem'         : $('input[id=addItem]').val(),
+                                        'description'     : $('input[id=descriptionItem]').val(),
+                                        'priceItem'       : $('input[id=priceItem]').val(),
+                                        }, // our data object
+                        dataType    : 'json', // what type of data do we expect back from the server
+
+                        success     : function (data) {
+
+                                          // $.get( "/newProducts", function( data ) { //.get for GET method
+                                    // NO NEED TO USE $.get because type:'GET' will bring all the data from '/newProducts' 
+                            
+                                                var source   = $("#myTemplate").html();
+                                                var template = Handlebars.compile(source);
+
+                                                var obj = eval ( data );
+                                                
+                                               // for( var i=0; i<obj.length; i++){
+                                                  /* USING #EACH IN TEMPLATE IS BETTER THAN USING FOR LOOP */
+                                                var temp = template(obj);
+                                                                                               
+                                                $('#display').append(temp);
+                                               
+                                                $(this).attr('id', temp.id);
+                                                         
+                                              //  }
+
+                                          //  });  //  $.get( "/Stores", function( data )       
+                            
+                                        } //function(data)
+
+                        });  // $.ajax({
+        
+            
+            
+            /////////////////// ADDING NEW PRODUCT ON THE PAGE WITHOUT LOADING THE WHOLE PAGE  //////////////////////////
+            
+            $("#submitButton").on('click', function(event){ 
+                    
+                event.preventDefault();
+                
+                     $.ajax({
+                        type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+                        url         : '/onlineItems', // the url where we want to POST
+                        data        : {
+                                        'addItem'         : $('input[id=addItem]').val(),
+                                        'description'     : $('input[id=descriptionItem]').val(),
+                                        'priceItem'       : $('input[id=priceItem]').val(),
+                                        }, // our data object
+                        dataType    : 'json', // what type of data do we expect back from the server
+
+                        success     : function (data) {
+
+                                          // $.get( "/newProducts", function( data ) {   //.get for GET method
+                                               
+                                            var source   = $("#myTemplate").html();
+                                            var template = Handlebars.compile(source);
+
+                                            var obj = eval ( data );
+                                            var myArray = [];
+                                            myArray.push(obj);
+
+                                            var temp = template(myArray);
+                                                                                               
+                                            $('#display').append(temp);
+                                               
+                                            $(this).attr('id', temp.id);
+
+                                         //   });  //  $.get( "/Stores", function( data )       
+                            
+                                        } //function(data)
+
+                        });  // $.ajax({
+                
+                    //Reseting all input values to null after add button being pressed
+                    $('input[id=addItem]').val("");
+                    $('input[id=descriptionItem]').val("");
+                    $('input[id=priceItem]').val("");
+  
+                });  // $("#submitButton").on('click', function(event)
+            
+            
+            /////////////////////////////// REMOVING PRODUCT FROM THE SERVER //////////////////////////////////////////////
+            
+            // remove whole div, by pressing remove button, using jQuery DELEGATION METHOD
+             $("#display").on( "click", ".glyphicon", function(){ 
+                 
+                   // e.preventDefault();
+                    var parent = $(this).parent();
+                    var grandParent = parent.parent();
+                 
+                    var txt;
+                    var reply = confirm("Are you sure you want to delete this item permanently ?");
+                 
+                    if (reply == true) {
+                        $.ajax({
+                        type        : 'DELETE', 
+                        url         : '/onlineItems/' + grandParent.attr('id'), 
+                    
+                        success     : function () {
+                                      
+                                        grandParent.slideUp(300,function() {
+                                            grandParent.remove();
+                                            });
+                                        }  
+                        });  // $.ajax({  
+                    } else {
+                       // txt = "You pressed Cancel!";
+                    }
+                 
+               /*  $(this).confirm({
+                     
+                    text: "Are you sure you want to delete this item permanently ?",
+                    title: "Confirmation required",
+                    confirm: function(button) {
+                        
+                        $.ajax({
+                        type        : 'DELETE', 
+                        url         : '/newProducts/' + grandParent.attr('id'), 
+                    
+                        success     : function () {
+                                      
+                                        grandParent.slideUp(300,function() {
+                                            grandParent.remove();
+                                            });
+                                        }  
+                        });  // $.ajax({  
+                    
+                    },
+                    cancel: function(button) {
+                        // nothing to do
+                    },
+                    confirmButton: "Yes I am",
+                    cancelButton: "No",
+                    post: true,
+                    confirmButtonClass: "btn-danger",
+                    cancelButtonClass: "btn-default",
+                    dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
+                }); */
+                
+            });  //$("#display").on( "click", ".glyphicon", function()
+            
+        });  //  $(document).ready(function(){
+        
+
+
+    -->
+    
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+        <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+
+</body>
+</html>
