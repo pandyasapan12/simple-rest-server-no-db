@@ -1,0 +1,49 @@
+<div class="col-md-9">
+                
+                <form class="form-inline" role="form">
+                  <div class="form-group">
+                    <label for="search">Search</label>
+                    <input type="text" class="form-control" id="searchItem" placeholder="Search by item name" ng-model="searchProduct">
+                  </div>
+                </form>
+            
+                <p></p>
+            
+                <form class="form-inline" role="form">
+                  <div class="form-group">
+                        <label for="adding">Add Item</label>
+                        <input type="text" class="form-control" id="addItem" placeholder="Item Name" ng-model="newItemName">
+                        <input type="text" class="form-control" id="descriptionItem" placeholder="Description" ng-model="newItemDescription">
+                        <input type="text" class="form-control" id="priceItem" placeholder="Price" ng-model="newItemPrice">
+                  </div>
+                        <button type="submit" class="btn btn-default" id="submitButton" ng-click="createProduct()" >Add</button>
+                </form> 
+            
+                <div id="display">
+                    
+                    <!-- ------------------------ Template ---------------------------------------------- -->
+                    
+                       <div ng-repeat='product in products | filter:{addItem: searchProduct} '> 
+                           
+                            <div id='{{product.id}}' class='container topMargin well'>
+                                
+                                <div class='col-md-8'>
+                                    <h2 class='newItemName'> {{product.addItem}} </h2>
+                                    <h4 class='newItemDescription'> {{product.description}} </h4>
+                                </div>
+                                <div class='col-md-2 main'>
+                                    <button class='btn btn-primary'><span class='newItemValue'> {{product.priceItem}} </span></button>
+                                </div>
+                                <div class='col-md-2 main'>
+                                    <span class='glyphicon glyphicon-remove-sign removeData' ng-click='removeMe(product.id)'></span>
+                                </div>
+                                
+                            </div> 
+                           
+                        </div>
+                    
+                    <!-- ---------------------------------------------------------------------------------- -->
+                            
+                </div> <!-- <div id="display"> -->
+            
+        </div> <!-- <div class="col-md-9"> -->
